@@ -44,6 +44,9 @@ export interface Product {
   featured: boolean;
   stock: number;
   active: boolean;
+  leyenda?: string | null;
+  datasheet_url?: string | null;
+  datasheet_path?: string | null;
   created_at?: string;
 }
 

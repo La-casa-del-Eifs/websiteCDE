@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
+  FileText,
   ArrowLeft,
   Check,
   MessageCircle,
@@ -77,6 +78,9 @@ export default async function ProductoPage({
               </Link>
             )}
             <h1 className="mt-3 text-3xl font-bold text-ink">{product.name}</h1>
+            {product.leyenda && (
+              <p className="mt-2 text-base text-ink-soft">{product.leyenda}</p>
+            )}
             {hasOffer(product) ? (
               <div className="mt-4 flex flex-wrap items-baseline gap-2">
                 <p className="text-3xl font-bold text-brand-700">{formatCurrency(effectivePrice(product))}</p>
@@ -100,6 +104,17 @@ export default async function ProductoPage({
               <p className="mt-6 leading-relaxed text-ink-soft">
                 {product.description}
               </p>
+            )}
+
+            {product.datasheet_url && (
+              <a
+                href={product.datasheet_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline mt-6 w-fit"
+              >
+                <FileText size={16} /> Cartilla técnica (PDF)
+              </a>
             )}
 
             {/* Especificaciones */}

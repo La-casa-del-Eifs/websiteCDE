@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Star, Images, ExternalLink, Loader2, Check, Save } from "lucide-react";
+import { Star, Images, ExternalLink, Loader2, Check, Save, Pencil } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Product } from "@/types/database";
 import { formatCurrency } from "@/lib/format";
@@ -107,6 +107,9 @@ export default function ProductsManager({
               </td>
               <td className="px-4 py-3 text-right">
                 <div className="flex items-center justify-end gap-3">
+                  <Link href={`/dashboard/productos/${p.id}/editar`} className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
+                    <Pencil size={13} /> Editar
+                  </Link>
                   <Link href={`/dashboard/productos/${p.id}/imagenes`} className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
                     <Images size={13} /> Imágenes
                   </Link>

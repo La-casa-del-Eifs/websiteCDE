@@ -31,6 +31,9 @@ export default function ProductCard({ product }: { product: Product }) {
           <h3 className="text-[15px] font-semibold leading-snug text-ink group-hover:text-brand-700">
             {product.name}
           </h3>
+          {product.leyenda && (
+            <p className="mt-1 text-xs text-ink-soft">{product.leyenda}</p>
+          )}
           {product.dimensions && (
             <p className="mt-1 text-xs text-ink-muted">{product.dimensions}</p>
           )}

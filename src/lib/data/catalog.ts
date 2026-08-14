@@ -235,3 +235,27 @@ export async function getPriceLists(): Promise<{ id: number; name: string }[]> {
     return [];
   }
 }
+
+// Producto con textos + PDF para el editor del panel.
+export async function getProductForEditor(id: string): Promise<{
+  id: string;
+  name: string;
+  sku: string | null;
+  leyenda: string | null;
+  description: string | null;
+  datasheet_url: string | null;
+  datasheet_path: string | null;
+} | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("products")
+      .select("id, name, sku, leyenda, description, datasheet_url, datasheet_path")
+      .eq("id", id)
+      .single();
+    return (data as any) ?? null;
+  } catch {
+    return null;
+  }
+}
