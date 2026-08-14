@@ -81,10 +81,6 @@ export default async function HomePage() {
 
           <div className="relative">
             <HeroCarousel images={heroImages} />
-            <div className="absolute -bottom-4 -left-4 hidden rounded-xl bg-gold-400 px-5 py-3 text-brand-900 shadow-soft sm:block">
-              <p className="text-2xl font-bold">+120</p>
-              <p className="text-xs text-brand-800">productos en catálogo</p>
-            </div>
           </div>
         </div>
       </section>
