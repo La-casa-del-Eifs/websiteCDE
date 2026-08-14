@@ -67,7 +67,7 @@ export default function AddToCartButton({
           className="btn-accent"
         >
           {added ? <Check size={17} /> : <ShoppingCart size={17} />}
-          {added ? "Agregado" : outOfStock ? "Sin stock" : "Agregar al carrito"}
+          {added ? "Agregado" : outOfStock ? "Agotado" : "Agregar al carrito"}
         </button>
       </div>
     );

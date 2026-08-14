@@ -92,8 +92,8 @@ export default async function ProductoPage({
                 inStock ? "text-green-700" : "text-red-600"
               }`}
             >
-              <Check size={15} />
-              {inStock ? "Disponible" : "Sin stock"}
+              {inStock && <Check size={15} />}
+              {inStock ? "Disponible" : "Temporalmente agotado"}
             </p>
 
             {product.description && (
