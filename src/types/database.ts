@@ -156,3 +156,10 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   usuario: "Usuario",
   empresa: "Empresa",
 };
+
+export interface SiteImage {
+  key: string;
+  url: string;
+  path: string | null;
+  updated_at: string;
+}

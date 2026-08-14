@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import PublicShell from "@/components/PublicShell";
 import { getTeamMembers } from "@/lib/data/team";
+import { getSiteImage } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Nosotros",
@@ -47,6 +48,7 @@ export const dynamic = "force-dynamic";
 
 export default async function NosotrosPage() {
   const team = await getTeamMembers();
+  const eifsImg = await getSiteImage("eifs_diagram");
   return (
     <PublicShell>
       {/* Hero */}
@@ -68,14 +70,23 @@ export default async function NosotrosPage() {
       {/* ¿Qué es EIFS? */}
       <section className="container-page grid items-center gap-10 py-16 md:grid-cols-2">
         <div className="card overflow-hidden">
-          <div className="relative flex aspect-[5/4] items-center justify-center bg-gradient-to-br from-brand-100 via-brand-50 to-gold-50">
-            <div className="flex flex-col items-center gap-3 text-brand-700">
-              <Layers size={64} strokeWidth={1.2} />
-              <p className="text-sm font-semibold uppercase tracking-widest">
-                Capas del sistema EIFS
-              </p>
+          {eifsImg ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={eifsImg}
+              alt="Sistema EIFS"
+              className="aspect-[5/4] w-full object-cover"
+            />
+          ) : (
+            <div className="relative flex aspect-[5/4] items-center justify-center bg-gradient-to-br from-brand-100 via-brand-50 to-gold-50">
+              <div className="flex flex-col items-center gap-3 text-brand-700">
+                <Layers size={64} strokeWidth={1.2} />
+                <p className="text-sm font-semibold uppercase tracking-widest">
+                  Capas del sistema EIFS
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div>
           <h2 className="text-2xl font-bold text-ink">¿Qué es EIFS?</h2>
