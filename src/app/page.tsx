@@ -61,11 +61,11 @@ export default async function HomePage() {
           <div>
             <span className="badge">Sistemas EIFS para fachadas</span>
             <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">
-              Fachadas que aíslan, protegen y{" "}
-              <span className="rounded-md bg-gold-200/80 px-1.5 text-brand-900">enamoran</span>.
+              FERRETERÍA LA CASA DEL{" "}
+              <span className="rounded-md bg-gold-200/80 px-1.5 text-brand-900">EIFS</span>.
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-soft">
-              Todo para tu sistema EIFS en un solo lugar: molduras, cornisas,
+              Todo para tu sistema proyecto en un solo lugar: molduras, cornisas,
               marcos, adhesivos, mallas y acabados. Calidad profesional con
               asesoría experta.
             </p>
@@ -152,7 +152,7 @@ export default async function HomePage() {
           <div>
             <h2 className="text-2xl font-bold text-ink">Productos destacados</h2>
             <p className="mt-1 text-sm text-ink-soft">
-              Los favoritos de nuestros clientes.
+              Promociones especiales
             </p>
           </div>
           <Link
