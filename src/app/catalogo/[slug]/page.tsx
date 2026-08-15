@@ -101,7 +101,7 @@ export default async function ProductoPage({
             </p>
 
             {product.description && (
-              <p className="mt-6 leading-relaxed text-ink-soft">
+              <p className="mt-6 whitespace-pre-line leading-relaxed text-ink-soft">
                 {product.description}
               </p>
             )}
