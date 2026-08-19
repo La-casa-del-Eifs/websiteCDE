@@ -116,9 +116,22 @@ export interface HeroSlide {
   id: string;
   path: string;
   url: string;
+  link_url?: string | null;
+  overlay_url?: string | null;
+  overlay_path?: string | null;
+  overlay_text?: string | null;
+  promo_cuotas?: number | null;
+  promo_monto?: string | null;
   sort_order: number;
   active: boolean;
   created_at?: string;
+}
+
+export interface HeroImage {
+  url: string;
+  link: string | null;
+  overlayUrl: string | null;
+  overlayText: string | null;
 }
 
 export interface ProductImage {

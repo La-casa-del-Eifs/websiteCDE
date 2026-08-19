@@ -2,32 +2,45 @@ import fs from "fs";
 import path from "path";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/config";
-import type { HeroSlide } from "@/types/database";
+import type { HeroSlide, HeroImage } from "@/types/database";
 
-function localHeroImages(): string[] {
+function localHeroImages(): HeroImage[] {
   try {
     const dir = path.join(process.cwd(), "public", "hero");
     return fs
       .readdirSync(dir)
       .filter((f) => /\.(jpe?g|png|webp|avif)$/i.test(f))
       .sort()
-      .map((f) => `/hero/${f}`);
+      .map((f) => ({ url: `/hero/${f}`, link: null, overlayUrl: null, overlayText: null }));
   } catch {
     return [];
   }
 }
 
-// URLs para el carrusel público. Usa Supabase si hay imágenes; si no, /public/hero.
-export async function getHeroImages(): Promise<string[]> {
+// Imágenes del carrusel público (con enlace, imagen de producto y texto de promo).
+export async function getHeroImages(): Promise<HeroImage[]> {
   if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient();
-      const { data } = await supabase
+      // Selecciona todas las columnas: así no falla si aún no se corrieron las
+      // migraciones de overlay (las columnas faltantes quedan en null).
+      const { data, error } = await supabase
         .from("hero_slides")
-        .select("url")
+        .select("*")
         .eq("active", true)
         .order("sort_order", { ascending: true });
-      if (data && data.length > 0) return data.map((d) => d.url as string);
+      if (error) console.error("[hero] getHeroImages error:", error.message);
+      console.log(
+        `[hero] Supabase devolvió ${data?.length ?? 0} banner(s) activos` +
+          (data && data.length > 0 ? "" : " → usando respaldo local public/hero")
+      );
+      if (data && data.length > 0)
+        return data.map((d: any) => ({
+          url: d.url as string,
+          link: (d.link_url as string) || null,
+          overlayUrl: (d.overlay_url as string) || null,
+          overlayText: (d.overlay_text as string) || null,
+        }));
     } catch {
       /* fallback local */
     }

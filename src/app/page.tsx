@@ -49,38 +49,39 @@ export default async function HomePage() {
   return (
     <PublicShell>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50 to-sand">
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(135deg, #0f2b53 0, #0f2b53 1px, transparent 1px, transparent 22px)",
-          }}
-        />
-        <div className="container-page relative grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
-          <div>
-            <span className="badge">Sistemas EIFS para fachadas</span>
-            <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">
-              FERRETERÍA LA CASA DEL{" "}
-              <span className="rounded-md bg-gold-200/80 px-1.5 text-brand-900">EIFS</span>.
-            </h1>
-            <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink-soft">
-              Todo para tu sistema proyecto en un solo lugar: molduras, cornisas,
-              marcos, adhesivos, mallas y acabados. Calidad profesional con
-              asesoría experta.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/catalogo" className="btn-accent">
-                Ver catálogo <ArrowRight size={17} />
-              </Link>
-              <Link href="/contacto" className="btn-outline">
-                Solicitar cotización
-              </Link>
-            </div>
+      <section className="container-page py-8 md:py-10">
+        <div className="relative rounded-2xl bg-brand-900 shadow-soft">
+          {/* Fondo: carrusel (o navy si no hay imágenes) */}
+          <div className="absolute inset-0">
+            <HeroCarousel images={heroImages} variant="background" />
           </div>
-
-          <div className="relative">
-            <HeroCarousel images={heroImages} />
+          {/* Degradado para que el texto se lea sobre la foto */}
+          <div className="pointer-events-none absolute inset-0 z-[15] rounded-2xl bg-gradient-to-r from-brand-950/90 via-brand-950/55 to-brand-950/10" />
+          {/* Contenido encima */}
+          <div className="relative z-20 flex min-h-[380px] items-center p-8 sm:p-10 md:min-h-[460px] md:p-14">
+            <div className="max-w-xl">
+              <span className="badge">Sistemas EIFS para fachadas</span>
+              <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-white drop-shadow sm:text-5xl">
+                FERRETERÍA LA CASA DEL{" "}
+                <span className="rounded-md bg-gold-400 px-1.5 text-brand-900">EIFS</span>.
+              </h1>
+              <p className="mt-5 max-w-lg text-lg leading-relaxed text-brand-50 drop-shadow">
+                Todo para tu sistema o proyecto en un solo lugar: molduras, cornisas,
+                marcos, adhesivos, mallas y acabados. Calidad profesional con
+                asesoría experta.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/catalogo" className="btn-accent">
+                  Ver catálogo <ArrowRight size={17} />
+                </Link>
+                <Link
+                  href="/contacto"
+                  className="btn border border-white/40 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus:ring-white/50"
+                >
+                  Solicitar cotización
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
