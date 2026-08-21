@@ -5,8 +5,8 @@ import { CartProvider } from "@/lib/cart/CartContext";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "La Casa del Eifs | Molduras y sistemas EIFS para fachadas",
-    template: "%s | La Casa del Eifs",
+    default: "La Casa del EIFS",
+    template: "%s | La Casa del EIFS",
   },
   description:
     "Especialistas en sistemas EIFS: molduras, cornisas, marcos, adhesivos y acabados para fachadas. Catálogo de productos y asesoría profesional.",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "La Casa del Eifs",
   ],
   openGraph: {
-    title: "La Casa del Eifs",
+    title: "La Casa del EIFS",
     description:
       "Sistemas EIFS para fachadas: molduras, cornisas, marcos, adhesivos y acabados.",
     type: "website",
