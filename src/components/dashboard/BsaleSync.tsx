@@ -62,6 +62,29 @@ export default function BsaleSync() {
               <p className="mt-1 text-xl font-bold text-ink">{summary.deactivated}</p>
             </div>
           </div>
+
+          {summary.perOffice && Object.keys(summary.perOffice).length > 0 && (
+            <div className="mt-4">
+              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-ink-muted">
+                Stock disponible por sucursal
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {Object.entries(summary.perOffice).map(([name, total]) => (
+                  <div key={name} className="card p-4">
+                    <p className="text-xs text-ink-muted">{name}</p>
+                    <p className="mt-1 text-lg font-bold text-ink">
+                      {Number(total).toLocaleString("es-CL")} u.
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-ink-muted">
+                {summary.offices} sucursal(es) leídas desde Bsale. El stock del
+                catálogo es la suma de todas.
+              </p>
+            </div>
+          )}
+
           <p className="mt-2 text-xs text-ink-muted">
             Lista de precios #{summary.priceListId} · {summary.withPrice} con precio ·{" "}
             {summary.withStock} con stock.

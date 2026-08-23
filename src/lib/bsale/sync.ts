@@ -10,6 +10,8 @@ export interface SyncSummary {
   deactivated: number;
   withPrice: number;
   withStock: number;
+  offices: number;
+  perOffice: Record<string, number>;
 }
 
 export async function syncProductsAndStock(): Promise<SyncSummary> {
@@ -61,9 +63,11 @@ export async function syncProductsAndStock(): Promise<SyncSummary> {
   const catMap = new Map<number, string>();
   (cats ?? []).forEach((c: any) => catMap.set(Number(c.bsale_product_type_id), c.id));
 
-  // 2b) Sucursales (para elegir en el checkout).
+  // 2b) Sucursales (para elegir en el checkout y para sumar el stock de cada sede).
+  //     Se declara fuera del try para poder reutilizarla en el paso 4 (stock).
+  let offices: any[] = [];
   try {
-    const offices = await bsaleGetAll("offices.json");
+    offices = await bsaleGetAll("offices.json");
     if (offices.length) {
       const officeRows = offices.map((o: any) => ({
         id: Number(o.id),
@@ -85,13 +89,38 @@ export async function syncProductsAndStock(): Promise<SyncSummary> {
     if (vid) priceMap.set(vid, val);
   }
 
-  // 4) Stock disponible (suma por sucursal).
-  const stocks = await bsaleGetAll("stocks.json");
+  // 4) Stock disponible: SUMA DE TODAS LAS SUCURSALES.
+  //    Consultamos cada sucursal por separado (stocks.json?officeid=ID) y
+  //    acumulamos el stock por variante. Así garantizamos que ninguna sede
+  //    quede fuera del total, sin depender de cómo se pagine la llamada global
+  //    a stocks.json. Además guardamos el total por sede (perOffice) para poder
+  //    verificar que ambas sucursales están aportando.
   const stockMap = new Map<number, number>();
-  for (const s of stocks) {
-    const vid = Number(s?.variant?.id);
-    if (!vid) continue;
-    stockMap.set(vid, (stockMap.get(vid) ?? 0) + Number(s?.quantityAvailable ?? 0));
+  const perOffice: Record<string, number> = {};
+
+  if (offices.length) {
+    for (const o of offices) {
+      const oid = Number(o.id);
+      if (!oid) continue;
+      const stocks = await bsaleGetAll(`stocks.json?officeid=${oid}`);
+      let sedeTotal = 0;
+      for (const s of stocks) {
+        const vid = Number(s?.variant?.id);
+        if (!vid) continue;
+        const qty = Number(s?.quantityAvailable ?? 0);
+        stockMap.set(vid, (stockMap.get(vid) ?? 0) + qty);
+        sedeTotal += qty;
+      }
+      perOffice[o.name || `Sucursal ${oid}`] = Math.round(sedeTotal);
+    }
+  } else {
+    // Respaldo: si no pudimos listar sucursales, usamos la llamada global.
+    const stocks = await bsaleGetAll("stocks.json");
+    for (const s of stocks) {
+      const vid = Number(s?.variant?.id);
+      if (!vid) continue;
+      stockMap.set(vid, (stockMap.get(vid) ?? 0) + Number(s?.quantityAvailable ?? 0));
+    }
   }
 
   // 5) Productos con sus variantes.
@@ -200,5 +229,7 @@ export async function syncProductsAndStock(): Promise<SyncSummary> {
     deactivated,
     withPrice: priceMap.size,
     withStock: stockMap.size,
+    offices: offices.length,
+    perOffice,
   };
 }
