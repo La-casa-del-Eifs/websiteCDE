@@ -17,7 +17,6 @@ export default function CatalogGrid({
   const [q, setQ] = useState(initialQuery);
   const term = q.trim().toLowerCase();
 
-  const LIMIT = 60;
   const filtered = useMemo(() => {
     if (!term) return products;
     return products.filter(
@@ -26,8 +25,6 @@ export default function CatalogGrid({
         (p.sku ?? "").toLowerCase().includes(term)
     );
   }, [products, term]);
-
-  const shown = filtered.slice(0, LIMIT);
 
   return (
     <div>
@@ -49,7 +46,6 @@ export default function CatalogGrid({
         {filtered.length} producto{filtered.length !== 1 ? "s" : ""}
         {categoryName ? ` en ${categoryName}` : ""}
         {term ? ` para “${q}”` : ""}
-        {filtered.length > LIMIT ? ` · mostrando ${LIMIT}, escribe para refinar` : ""}
       </p>
 
       {filtered.length === 0 ? (
@@ -60,7 +56,7 @@ export default function CatalogGrid({
         </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {shown.map((p) => (
+          {filtered.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
