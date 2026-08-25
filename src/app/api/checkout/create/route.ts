@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/config";
-import { getWebpayTransaction } from "@/lib/webpay";
+import { getWebpayTransaction, webpayConfigSummary } from "@/lib/webpay";
 import { siteOrigin } from "@/lib/site-url";
 
 interface ReqItem { id: string; qty: number }
@@ -137,17 +137,30 @@ export async function POST(request: Request) {
   const site = siteOrigin(request);
   const returnUrl = `${site}/api/checkout/commit`;
   try {
+    // Diagnóstico en los logs de Vercel (NO expone la llave secreta):
+    console.log(
+      "[webpay/create] config:",
+      webpayConfigSummary(),
+      "| total:",
+      total,
+      "| returnUrl:",
+      returnUrl
+    );
     const tx = getWebpayTransaction();
     const resp = await tx.create(buyOrder, String(order.id), total, returnUrl);
     await supabase.from("orders").update({ tbk_token: resp.token }).eq("id", order.id);
     return NextResponse.json({ url: resp.url, token: resp.token });
-  } catch {
+  } catch (e: any) {
+    const detail = String(e?.message || e || "").slice(0, 400);
+    console.error("[webpay/create] Error al crear la transacción:", detail);
     await supabase
       .from("orders")
       .update({ payment_status: "error", status: "cancelado" })
       .eq("id", order.id);
     return NextResponse.json(
-      { error: "No se pudo iniciar el pago con Webpay. Inténtalo nuevamente." },
+      // Temporal: mostramos el detalle real de Transbank para diagnosticar.
+      // Cuando el pago funcione, se vuelve al mensaje genérico.
+      { error: `No se pudo iniciar el pago con Webpay: ${detail}` },
       { status: 502 }
     );
   }
