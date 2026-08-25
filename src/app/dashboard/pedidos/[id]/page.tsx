@@ -168,6 +168,20 @@ export default async function PedidoDetalle({
               "Verificar" consulta el estado real en Webpay. "Marcar pagado" es para
               cobros recibidos por otra vía.
             </p>
+            {order.tbk_token && (
+              <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/50 p-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">
+                  Token Webpay (token_ws)
+                </p>
+                <p className="mt-1 select-all break-all font-mono text-xs text-ink">
+                  {order.tbk_token}
+                </p>
+                <p className="mt-1 text-[11px] text-ink-muted">
+                  Este es el valor que pide la validación de Transbank (no el número de
+                  pedido). Haz clic para seleccionarlo y cópialo.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
