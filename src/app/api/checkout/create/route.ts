@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/config";
 import { getWebpayTransaction } from "@/lib/webpay";
+import { siteOrigin } from "@/lib/site-url";
 
 interface ReqItem { id: string; qty: number }
 
@@ -131,7 +132,9 @@ export async function POST(request: Request) {
   }
 
   // Crear transacción Webpay.
-  const site = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+  // El dominio de retorno se detecta desde el request (dominio real de Vercel),
+  // así Webpay siempre devuelve al sitio correcto y no a localhost.
+  const site = siteOrigin(request);
   const returnUrl = `${site}/api/checkout/commit`;
   try {
     const tx = getWebpayTransaction();

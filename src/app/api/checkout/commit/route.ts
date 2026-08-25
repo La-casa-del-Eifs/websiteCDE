@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
 import { getWebpayTransaction } from "@/lib/webpay";
 import { hasBsale } from "@/lib/bsale/client";
+import { siteOrigin } from "@/lib/site-url";
 
 async function handle(request: Request) {
-  const site = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+  // Dominio real desde el request, para que la vuelta caiga en el sitio correcto.
+  const site = siteOrigin(request);
   const result = (status: string, order = "") =>
     NextResponse.redirect(
       `${site}/checkout/resultado?status=${status}${order ? `&order=${encodeURIComponent(order)}` : ""}`,
