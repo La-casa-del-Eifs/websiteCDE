@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "La Casa del EIFS",
     description:
-      "Sistemas EIFS para fachadas: molduras, cornisas, marcos, adhesivos y acabados.",
+      "Envolventes térmicos.",
     type: "website",
   },
 };
