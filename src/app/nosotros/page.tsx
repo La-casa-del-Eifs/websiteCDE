@@ -22,12 +22,12 @@ const values = [
   {
     icon: Target,
     title: "Misión",
-    text: "Proveer sistemas EIFS de calidad y asesoría experta para que cada fachada sea eficiente, durable y estéticamente superior.",
+    text: "Acompañar a cada familia en el cuidado de su hogar, entregando envolventes térmicos de calidad y asesoría experta para que su fachada sea más eficiente, durable, confortable y estéticamente superior.",
   },
   {
     icon: Eye,
     title: "Visión",
-    text: "Ser el referente en soluciones EIFS, reconocidos por la confiabilidad de nuestros productos y el acompañamiento a cada proyecto.",
+    text: "Ser el referente en soluciones de envolventes térmicos, reconocidos por la confiabilidad de nuestros productos y el acompañamiento a cada proyecto.",
   },
   {
     icon: HeartHandshake,
@@ -37,9 +37,9 @@ const values = [
 ];
 
 const reasons = [
-  "Amplio catálogo de molduras, cornisas, marcos y acabados.",
+  "Amplio catálogo para un proyecto completo.",
   "Materiales de aislación térmica de alto rendimiento.",
-  "Asesoría en especificación técnica del sistema.",
+  "Asesoría en especificación constructiva.",
   "Coordinación de despacho para tu obra.",
   "Atención cercana antes, durante y después de la compra.",
 ];
@@ -59,8 +59,7 @@ export default async function NosotrosPage() {
             Especialistas en sistemas EIFS para fachadas
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
-            En La Casa del Eifs reunimos todo lo necesario para ejecutar un
-            sistema EIFS de principio a fin. Trabajamos con constructoras,
+            En La Casa del Eifs reunimos todo lo necesario para ejecutar un proyecto de principio a fin. Trabajamos con constructoras,
             arquitectos, ferreterías y particulares, ofreciendo productos
             confiables y asesoría técnica real.
           </p>
