@@ -26,8 +26,9 @@ export default async function ProductosAdmin({
     <div>
       <h1 className="text-2xl font-bold text-ink">Productos</h1>
       <p className="mt-1 text-sm text-ink-soft">
-        {products.length} producto{products.length !== 1 ? "s" : ""}. Marca{" "}
-        <b>destacados</b> (para el inicio) y pon un <b>precio de oferta</b>.
+        {products.length} producto{products.length !== 1 ? "s" : ""}. Controla la{" "}
+        <b>visibilidad</b> en el catálogo (ojito), marca <b>destacados</b> (para el
+        inicio) y pon un <b>precio de oferta</b>.
       </p>
 
       <form action="/dashboard/productos" method="get" className="mt-6 max-w-sm">

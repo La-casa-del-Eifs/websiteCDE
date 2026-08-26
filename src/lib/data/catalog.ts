@@ -29,7 +29,7 @@ export async function getProducts(opts?: {
   const { categorySlug, search, featuredOnly } = opts ?? {};
 
   if (!isSupabaseConfigured()) {
-    let list = sampleProducts.filter((p) => p.active);
+    let list = sampleProducts.filter((p) => p.active && !p.hidden);
     if (categorySlug)
       list = list.filter((p) => p.category?.slug === categorySlug);
     if (featuredOnly) list = list.filter((p) => p.featured);
@@ -65,6 +65,9 @@ export async function getProducts(opts?: {
     let list = data as unknown as Product[];
     if (categorySlug)
       list = list.filter((p) => p.category?.slug === categorySlug);
+    // Ocultar del catálogo los productos marcados como "ocultos" en el panel.
+    // (Si la columna aún no existe, p.hidden es undefined y no oculta nada.)
+    list = list.filter((p) => !p.hidden);
     return applyEmpresaPrices(list);
   } catch {
     return sampleProducts;
@@ -118,6 +121,8 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     if (error || !data) {
       return sampleProducts.find((p) => p.slug === slug) ?? null;
     }
+    // Producto oculto: tampoco accesible por su URL directa.
+    if ((data as any).hidden) return null;
     const [priced] = await applyEmpresaPrices([data as unknown as Product]);
     return priced;
   } catch {
