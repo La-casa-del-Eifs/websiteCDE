@@ -60,7 +60,7 @@ export default async function HomePage() {
           {/* Contenido encima */}
           <div className="relative z-20 flex min-h-[380px] items-center p-8 sm:p-10 md:min-h-[460px] md:p-14">
             <div className="max-w-xl">
-              <span className="badge">Sistemas EIFS para fachadas</span>
+              <span className="badge">Envolventes térmicos para tu proyecto</span>
               <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-white drop-shadow sm:text-5xl">
                 FERRETERÍA LA CASA DEL{" "}
                 <span className="rounded-md bg-gold-400 px-1.5 text-brand-900">EIFS</span>.
