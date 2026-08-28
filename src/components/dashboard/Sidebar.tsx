@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
-  LayoutDashboard, ClipboardList, Package, LayoutGrid, Users, UserCog, Images, Contact, Plug, Home, LogOut, Menu, X,
+  LayoutDashboard, ClipboardList, Package, LayoutGrid, Users, UserCog, Images, Contact, Plug, Settings, Home, LogOut, Menu, X,
 } from "lucide-react";
 import Logo from "@/components/Logo";
 import { ROLE_LABELS, type UserRole } from "@/types/database";
@@ -28,6 +28,7 @@ export default function Sidebar({
     { href: "/dashboard/portada", label: "Portada", icon: Images, roles: ["admin"] as UserRole[] },
     { href: "/dashboard/equipo", label: "Equipo", icon: Contact, roles: ["admin"] as UserRole[] },
     { href: "/dashboard/bsale", label: "Bsale", icon: Plug, roles: ["admin"] as UserRole[] },
+    { href: "/dashboard/ajustes", label: "Ajustes", icon: Settings, roles: ["admin"] as UserRole[] },
   ].filter((l) => l.roles.includes(role));
 
   const isActive = (href: string) =>

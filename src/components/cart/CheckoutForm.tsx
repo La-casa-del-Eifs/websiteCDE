@@ -14,12 +14,14 @@ type Method = "despacho" | "retiro";
 
 export default function CheckoutForm({
   offices,
+  deliveryEnabled = true,
 }: {
   offices: { id: number; name: string }[];
+  deliveryEnabled?: boolean;
 }) {
   const { items, subtotal, hydrated } = useCart();
   const discount = useUserDiscount();
-  const [method, setMethod] = useState<Method>("despacho");
+  const [method, setMethod] = useState<Method>(deliveryEnabled ? "despacho" : "retiro");
   const [officeId, setOfficeId] = useState<number | "">(offices[0]?.id ?? "");
   const [docType, setDocType] = useState<"boleta" | "factura">("boleta");
   const [pending, setPending] = useState(false);
@@ -237,22 +239,24 @@ export default function CheckoutForm({
           {/* Entrega */}
           <section className="card p-6">
             <h2 className="text-lg font-bold text-ink">Entrega</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setMethod("despacho")}
-                className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
-                  method === "despacho"
-                    ? "border-brand-500 bg-brand-50"
-                    : "border-brand-200 hover:border-brand-300"
-                }`}
-              >
-                <Truck size={20} className="text-brand-600" />
-                <div>
-                  <p className="text-sm font-semibold text-ink">Despacho</p>
-                  <p className="text-xs text-ink-soft">A tu domicilio u obra</p>
-                </div>
-              </button>
+            <div className={`mt-4 grid gap-3 ${deliveryEnabled ? "sm:grid-cols-2" : ""}`}>
+              {deliveryEnabled && (
+                <button
+                  type="button"
+                  onClick={() => setMethod("despacho")}
+                  className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
+                    method === "despacho"
+                      ? "border-brand-500 bg-brand-50"
+                      : "border-brand-200 hover:border-brand-300"
+                  }`}
+                >
+                  <Truck size={20} className="text-brand-600" />
+                  <div>
+                    <p className="text-sm font-semibold text-ink">Despacho</p>
+                    <p className="text-xs text-ink-soft">A tu domicilio u obra</p>
+                  </div>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => setMethod("retiro")}
@@ -269,6 +273,12 @@ export default function CheckoutForm({
                 </div>
               </button>
             </div>
+
+            {!deliveryEnabled && (
+              <p className="mt-3 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800">
+                El despacho a domicilio no está disponible por el momento. Solo retiro en tienda.
+              </p>
+            )}
 
             {offices.length > 0 && (
               <div className="mt-4">
