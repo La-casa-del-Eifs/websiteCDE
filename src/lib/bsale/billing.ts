@@ -16,7 +16,11 @@ export async function findOrCreateClient(order: any): Promise<number | null> {
   if (!rut) return null;
   try {
     const found = await bsaleGet(`clients.json?code=${encodeURIComponent(rut)}`);
-    if (found?.items?.length) return Number(found.items[0].id);
+    // Solo reutiliza un cliente cuyo RUT (code) realmente coincida con el del comprador.
+    const match = found?.items?.find(
+      (c: any) => rutForBsale(String(c.code || "")) === rut
+    );
+    if (match) return Number(match.id);
   } catch {
     /* si no existe, Bsale puede devolver 404 */
   }
@@ -30,7 +34,8 @@ export async function findOrCreateClient(order: any): Promise<number | null> {
       phone: order.buyer_phone || undefined,
     });
     return created?.id ? Number(created.id) : null;
-  } catch {
+  } catch (e: any) {
+    console.error("[bsale] crear cliente boleta:", e?.message);
     return null;
   }
 }
@@ -41,7 +46,10 @@ async function findOrCreateFacturaClient(order: any): Promise<number | null> {
   if (!rut) return null;
   try {
     const found = await bsaleGet(`clients.json?code=${encodeURIComponent(rut)}`);
-    if (found?.items?.length) return Number(found.items[0].id);
+    const match = found?.items?.find(
+      (c: any) => rutForBsale(String(c.code || "")) === rut
+    );
+    if (match) return Number(match.id);
   } catch {
     /* 404 si no existe */
   }
@@ -56,7 +64,8 @@ async function findOrCreateFacturaClient(order: any): Promise<number | null> {
       email: order.factura_email || undefined,
     });
     return created?.id ? Number(created.id) : null;
-  } catch {
+  } catch (e: any) {
+    console.error("[bsale] crear cliente factura:", e?.message);
     return null;
   }
 }

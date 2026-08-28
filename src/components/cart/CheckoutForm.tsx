@@ -90,6 +90,11 @@ export default function CheckoutForm({
   const shipping = method === "despacho" && subtotal > 0 ? 0 : 0; // se calcula luego
   const total = subtotal - discountAmount + shipping;
 
+  // Dirección de retiro según la sucursal elegida (1ª sucursal → 1ª dirección, etc.).
+  const officeIndex = offices.findIndex((o) => o.id === officeId);
+  const pickupAddress =
+    (officeIndex >= 0 && SITE.addresses[officeIndex]) || SITE.addresses[0];
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -269,7 +274,7 @@ export default function CheckoutForm({
                 <Store size={20} className="text-brand-600" />
                 <div>
                   <p className="text-sm font-semibold text-ink">Retiro en tienda</p>
-                  <p className="text-xs text-ink-soft">{SITE.addresses[0]}</p>
+                  <p className="text-xs text-ink-soft">{pickupAddress}</p>
                 </div>
               </button>
             </div>
