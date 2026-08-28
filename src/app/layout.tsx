@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 import { CartProvider } from "@/lib/cart/CartContext";
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s | La Casa del EIFS",
   },
   description:
-    "Especialistas en sistemas EIFS: molduras, cornisas, marcos, adhesivos y acabados para fachadas. Catálogo de productos y asesoría profesional.",
+    "Especialistas en envolventes térmicos (EIFS): molduras, cornisas, marcos, adhesivos y acabados. Catálogo de productos y asesoría profesional.",
   keywords: [
     "EIFS",
     "molduras EIFS",
@@ -48,6 +49,7 @@ export default function RootLayout({
       </head>
       <body>
         <CartProvider>{children}</CartProvider>
+        <Analytics />
       </body>
     </html>
   );

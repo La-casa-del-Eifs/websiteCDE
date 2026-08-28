@@ -15,7 +15,7 @@ import { getSiteImage } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Nosotros",
   description:
-    "Conoce La Casa del Eifs: especialistas en sistemas EIFS para fachadas, con productos de calidad y asesoría profesional.",
+    "Conoce La Casa del Eifs: especialistas en envolventes térmicos (EIFS), con productos de calidad y asesoría profesional.",
 };
 
 const values = [
@@ -56,7 +56,7 @@ export default async function NosotrosPage() {
         <div className="container-page py-16">
           <span className="badge">Sobre nosotros</span>
           <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-ink">
-            Especialistas en sistemas EIFS para fachadas
+            Especialistas en envolventes térmicos para tu proyecto
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
             En La Casa del Eifs reunimos todo lo necesario para ejecutar un proyecto de principio a fin. Trabajamos con constructoras,
@@ -73,7 +73,7 @@ export default async function NosotrosPage() {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={eifsImg}
-              alt="Sistema EIFS"
+              alt="Envolvente térmico EIFS"
               className="aspect-[5/4] w-full object-cover"
             />
           ) : (

@@ -15,7 +15,7 @@ export function isSupabaseConfigured(): boolean {
 
 export const SITE = {
   name: "Ferretería La Casa del Eifs",
-  tagline: "Sistemas EIFS para fachadas que perduran",
+  tagline: "Envolventes térmicos para tu proyecto",
 
   // ── Puedes agregar VARIOS: solo añade líneas separadas por coma ──
   emails: [

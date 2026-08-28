@@ -60,13 +60,22 @@ async function handle(request: Request) {
         .single();
       orderId = ord?.id ?? null;
     }
-    // Facturación en Bsale (best-effort: no afecta el resultado del pago).
-    if (approved && orderId && hasBsale()) {
+    if (approved && orderId) {
+      // Facturación en Bsale (best-effort: no afecta el resultado del pago).
+      if (hasBsale()) {
+        try {
+          const { emitDocumentForOrder } = await import("@/lib/bsale/billing");
+          await emitDocumentForOrder(orderId);
+        } catch {
+          /* se registra el error en el pedido; no bloquea */
+        }
+      }
+      // Correos: confirmación al comprador + aviso al vendedor (best-effort).
       try {
-        const { emitDocumentForOrder } = await import("@/lib/bsale/billing");
-        await emitDocumentForOrder(orderId);
+        const { sendOrderEmails } = await import("@/lib/email");
+        await sendOrderEmails(orderId);
       } catch {
-        /* se registra el error en el pedido; no bloquea */
+        /* no bloquea el resultado del pago */
       }
     }
     return result(approved ? "ok" : "rechazado", commit.buy_order || "");

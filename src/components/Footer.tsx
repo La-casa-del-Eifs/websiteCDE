@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="md:col-span-2">
           <Logo />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft">
-            Especialistas en sistemas EIFS para fachadas: molduras, cornisas,
+            Especialistas en envolventes térmicos (EIFS): molduras, cornisas,
             marcos, adhesivos, mallas y acabados. Calidad y asesoría para tu
             proyecto.
           </p>
@@ -58,7 +58,7 @@ export default function Footer() {
       <div className="border-t border-brand-100">
         <div className="container-page flex flex-col items-center justify-between gap-2 py-5 text-xs text-ink-muted sm:flex-row">
           <p>© {new Date().getFullYear()} {SITE.name}. Todos los derechos reservados.</p>
-          <p>Sistemas EIFS · Fachadas · Acabados</p>
+          <p>Envolventes térmicos · EIFS · Acabados</p>
         </div>
       </div>
     </footer>
