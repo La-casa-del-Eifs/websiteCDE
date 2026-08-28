@@ -23,6 +23,12 @@ export const SITE = {
     "avaldivia@casadeleifs.cl",
     "moya.eliceo@casadeleifs.cl",
   ],
+
+  // Correos que reciben el aviso de "Nueva compra" (pueden diferir de los de contacto).
+  orderNotifyEmails: [
+    "administracionyventas@casadeleifs.cl",
+    "dmoya@casadeleifs.cl",
+  ],
   phones: [
     "+56 9 8190 3925",
     "+56 9 86265467",

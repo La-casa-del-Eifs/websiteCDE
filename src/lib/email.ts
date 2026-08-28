@@ -91,9 +91,9 @@ export async function sendOrderEmails(orderId: string): Promise<void> {
       );
     }
 
-    // 2) Correo al vendedor (aviso de nueva venta) — a todos los correos de la empresa
+    // 2) Correo al vendedor (aviso de nueva venta) — a los correos de notificación
     await sendEmail(
-      SITE.emails,
+      SITE.orderNotifyEmails,
       `Nueva compra · Pedido ${num} · ${formatCurrency(Number(order.total))}`,
       `<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:auto;color:#14223a">
         <h2 style="color:#0f2b53">Nueva compra en el sitio</h2>
