@@ -27,7 +27,7 @@ const values = [
   {
     icon: Eye,
     title: "Visión",
-    text: "Ser el referente en soluciones de envolventes térmicos, reconocidos por la confiabilidad de nuestros productos y el acompañamiento a cada proyecto.",
+    text: "Transformar la fachada de cada hogar en una envolvente que cuida a la familia: más eficiente, confortable y duradera, respaldada por asesoría experta y trabajo de calidad.",
   },
   {
     icon: HeartHandshake,
