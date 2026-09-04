@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Wrench, MessageCircle, Phone } from "lucide-react";
+import { Wrench, MessageCircle, Phone, Mail } from "lucide-react";
 import { SITE } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 export default function MantencionPage() {
   const wa = `https://wa.me/${SITE.whatsapp}`;
   const phone = SITE.phones[0] || "";
+  const email = SITE.emails[0] || "";
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-brand-900 px-6 py-16 text-center text-white">
@@ -41,6 +42,14 @@ export default function MantencionPage() {
               className="inline-flex items-center gap-2 text-sm text-brand-100 hover:text-white"
             >
               <Phone size={16} /> {phone}
+            </a>
+          )}
+          {email && (
+            <a
+              href={`mailto:${email}`}
+              className="inline-flex items-center gap-2 text-sm text-brand-100 hover:text-white"
+            >
+              <Mail size={16} /> {email}
             </a>
           )}
         </div>
