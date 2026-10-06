@@ -17,11 +17,31 @@ export interface SyncSummary {
 export async function syncProductsAndStock(): Promise<SyncSummary> {
   const supabase = createAdminClient();
 
-  // 1) Lista de precios a usar (env o la primera activa).
+  // 1) Lista de precios a usar.
+  //    Prioridad: BSALE_PRICE_LIST_ID (control explícito en .env.local).
+  //    Si no está definido, elegimos automáticamente la lista con MÁS variantes
+  //    con precio (= la lista base). Antes se tomaba "la primera lista activa"
+  //    que devolviera Bsale, que podía ser una lista secundaria con pocos
+  //    productos y dejar casi todo el catálogo en precio 0.
   let priceListId = process.env.BSALE_PRICE_LIST_ID || "";
   if (!priceListId) {
-    const pls = await bsaleGet("price_lists.json?limit=1&state=0");
-    priceListId = String(pls?.items?.[0]?.id ?? "");
+    const lists = await bsaleGetAll("price_lists.json?state=0");
+    let bestCount = -1;
+    for (const pl of lists) {
+      const id = Number(pl?.id);
+      if (!id) continue;
+      let c = 0;
+      try {
+        const probe = await bsaleGet(`price_lists/${id}/details.json?limit=1`);
+        c = Number(probe?.count ?? 0);
+      } catch {
+        c = 0;
+      }
+      if (c > bestCount) {
+        bestCount = c;
+        priceListId = String(id);
+      }
+    }
   }
   if (!priceListId) throw new Error("No se encontró una lista de precios en Bsale.");
 
