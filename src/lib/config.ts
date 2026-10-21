@@ -38,6 +38,14 @@ export const SITE = {
     "Pasaje 12 sur b 1528, Población Daniel Rebolledo 335, Talca, Chile",
   ],
 
+  // Ubicación que se muestra en el mapa (Google Maps).
+  map: {
+    label: "Pje. Trece 335, Talca, Maule",
+    lat: -35.4411571,
+    lng: -71.6549362,
+    url: "https://maps.app.goo.gl/Tbh6fVAVSKw1isaj9",
+  },
+
   // WhatsApp: solo números con código de país, sin + ni espacios.
   whatsapp: "56986265467",
   // Mensaje que aparece precargado al abrir WhatsApp.

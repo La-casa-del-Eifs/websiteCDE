@@ -21,6 +21,7 @@ import PublicShell from "@/components/PublicShell";
 import EifsCalculator from "@/components/EifsCalculator";
 import ProductCard from "@/components/ProductCard";
 import ContactForm from "@/components/ContactForm";
+import MapEmbed from "@/components/MapEmbed";
 import Reveal from "@/components/Reveal";
 import DiamondPattern, { DiamondMark } from "@/components/DiamondPattern";
 import {
@@ -347,6 +348,7 @@ export default async function HomePage() {
             <ContactForm />
           </div>
         </div>
+        <MapEmbed className="mt-6" />
       </section>
     </PublicShell>
   );

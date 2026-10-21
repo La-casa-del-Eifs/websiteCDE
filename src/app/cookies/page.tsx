@@ -54,6 +54,10 @@ const thirdParties = [
     text: "Cargamos la tipografía del sitio desde Google, que recibe tu dirección IP al descargarla.",
   },
   {
+    name: "Google Maps",
+    text: "El mapa de ubicación lo entrega Google y usa sus propias cookies. Solo se carga si aceptas todas las cookies o pulsas «Mostrar mapa».",
+  },
+  {
     name: "WhatsApp",
     text: "Si haces clic en un botón de WhatsApp, se abre ese servicio con sus propias condiciones.",
   },

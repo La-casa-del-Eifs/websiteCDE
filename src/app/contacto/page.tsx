@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import PublicShell from "@/components/PublicShell";
 import ContactForm from "@/components/ContactForm";
+import MapEmbed from "@/components/MapEmbed";
 import { SITE } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
@@ -76,6 +77,12 @@ export default async function ContactoPage({
             <ContactForm producto={producto} />
           </div>
         </div>
+      </section>
+
+      {/* Mapa */}
+      <section className="container-page pb-4">
+        <h2 className="text-xl font-bold text-ink">Cómo llegar</h2>
+        <MapEmbed className="mt-5" mapClassName="h-[360px] md:h-[440px]" />
       </section>
     </PublicShell>
   );
