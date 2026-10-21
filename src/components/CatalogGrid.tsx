@@ -22,7 +22,12 @@ export default function CatalogGrid({
     return products.filter(
       (p) =>
         p.name.toLowerCase().includes(term) ||
-        (p.sku ?? "").toLowerCase().includes(term)
+        (p.sku ?? "").toLowerCase().includes(term) ||
+        (p.variants ?? []).some(
+          (v) =>
+            v.label.toLowerCase().includes(term) ||
+            (v.sku ?? "").toLowerCase().includes(term)
+        )
     );
   }, [products, term]);
 

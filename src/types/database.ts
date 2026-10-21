@@ -48,7 +48,24 @@ export interface Product {
   leyenda?: string | null;
   datasheet_url?: string | null;
   datasheet_path?: string | null;
+  bsale_variant_id?: number | null;
+  bsale_product_id?: number | null;
+  base_name?: string | null;
+  variant_name?: string | null;
+  // Solo en el catálogo público: variantes agrupadas del mismo producto Bsale.
+  variants?: ProductVariant[];
   created_at?: string;
+}
+
+// Opción elegible de un producto con variantes.
+export interface ProductVariant {
+  id: string;
+  slug: string;
+  label: string;
+  sku: string | null;
+  price: number;
+  offer_price?: number | null;
+  stock: number;
 }
 
 export type CustomerStatus = "activo" | "prospecto" | "inactivo";

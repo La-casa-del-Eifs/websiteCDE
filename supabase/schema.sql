@@ -61,6 +61,8 @@ create table if not exists public.products (
   active boolean not null default true,
   bsale_variant_id bigint,
   bsale_product_id bigint,
+  base_name text,
+  variant_name text,
   created_at timestamptz not null default now()
 );
 

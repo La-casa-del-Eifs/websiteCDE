@@ -153,15 +153,17 @@ export async function syncProductsAndStock(): Promise<SyncSummary> {
       const vid = Number(v.id);
       if (!vid) continue;
       syncedVariantIds.push(vid);
-      const extra =
-        v.description && String(v.description).toLowerCase() !== "única"
-          ? ` - ${v.description}`
-          : "";
-      const name = `${p.name}${extra}`.trim();
+      const variantName =
+        v.description && String(v.description).trim().toLowerCase() !== "única"
+          ? String(v.description).trim()
+          : null;
+      const name = `${p.name}${variantName ? ` - ${variantName}` : ""}`.trim();
       rows.push({
         bsale_variant_id: vid,
         bsale_product_id: Number(p.id),
         name,
+        base_name: String(p.name ?? "").trim() || null,
+        variant_name: variantName,
         slug: `${slugify(name) || "producto"}-${vid}`,
         sku: v.code || null,
         price: Math.round(priceMap.get(vid) ?? 0),
@@ -173,12 +175,23 @@ export async function syncProductsAndStock(): Promise<SyncSummary> {
   }
 
   // Upsert por lotes (no toca image_url/description/featured manuales).
+  // Si aún no se corrió la migración 021 (base_name/variant_name), se
+  // reintenta sin esas columnas para no bloquear la sincronización.
   let upserted = 0;
+  let withVariantCols = true;
   for (let i = 0; i < rows.length; i += 400) {
-    const batch = rows.slice(i, i + 400);
-    const { error } = await supabase
+    let batch = rows.slice(i, i + 400);
+    if (!withVariantCols) batch = batch.map(({ base_name, variant_name, ...r }) => r);
+    let { error } = await supabase
       .from("products")
       .upsert(batch, { onConflict: "bsale_variant_id" });
+    if (error && withVariantCols && /base_name|variant_name/.test(error.message)) {
+      withVariantCols = false;
+      batch = batch.map(({ base_name, variant_name, ...r }) => r);
+      ({ error } = await supabase
+        .from("products")
+        .upsert(batch, { onConflict: "bsale_variant_id" }));
+    }
     if (error) throw new Error(error.message);
     upserted += batch.length;
   }

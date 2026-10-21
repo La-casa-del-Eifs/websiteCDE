@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/config";
-import type { Category, Product, ProductImage } from "@/types/database";
+import type { Category, Product, ProductImage, ProductVariant } from "@/types/database";
 import { sampleCategories, sampleProducts } from "./sample";
+import { effectivePrice } from "@/lib/price";
 
 // ── Categorías ──────────────────────────────────────────────────
 export async function getCategories(): Promise<Category[]> {
@@ -68,9 +69,112 @@ export async function getProducts(opts?: {
     // Ocultar del catálogo los productos marcados como "ocultos" en el panel.
     // (Si la columna aún no existe, p.hidden es undefined y no oculta nada.)
     list = list.filter((p) => !p.hidden);
-    return applyEmpresaPrices(list);
+    return groupVariants(await applyEmpresaPrices(list));
   } catch {
     return sampleProducts;
+  }
+}
+
+// ── Variantes ───────────────────────────────────────────────────
+// Nombre corto de la variante ("10 cm", "Blanco"...).
+export function variantLabel(p: Product): string {
+  if (p.variant_name) return p.variant_name;
+  if (p.base_name && p.name.startsWith(p.base_name)) {
+    const rest = p.name.slice(p.base_name.length).replace(/^\s*-\s*/, "").trim();
+    if (rest) return rest;
+  }
+  return p.name;
+}
+
+function toVariant(p: Product): ProductVariant {
+  return {
+    id: p.id,
+    slug: p.slug,
+    label: variantLabel(p),
+    sku: p.sku,
+    price: p.price,
+    offer_price: p.offer_price ?? null,
+    stock: p.stock,
+  };
+}
+
+// Respaldo si aún no existen base_name/variant_name (migración 021 sin correr):
+// la sincronización arma el nombre como "Producto - Variante", así que el
+// nombre base es la parte común hasta el último " - ".
+function fillVariantNames(vs: Product[]): Product[] {
+  if (vs.length < 2 || vs.every((v) => v.base_name)) return vs;
+  let prefix = vs[0].name;
+  for (const v of vs) {
+    let i = 0;
+    while (i < prefix.length && i < v.name.length && prefix[i] === v.name[i]) i++;
+    prefix = prefix.slice(0, i);
+  }
+  const cut = prefix.lastIndexOf(" - ");
+  if (cut <= 0) return vs;
+  const base = prefix.slice(0, cut).trim();
+  return vs.map((v) => (v.base_name ? v : { ...v, base_name: base }));
+}
+
+const byVariantOrder = (a: Product, b: Product) =>
+  Number(a.bsale_variant_id ?? 0) - Number(b.bsale_variant_id ?? 0);
+
+// Junta en una sola tarjeta las variantes del mismo producto de Bsale.
+// La tarjeta usa la variante más barata con stock y lleva la lista en `variants`.
+function groupVariants(list: Product[]): Product[] {
+  const groups = new Map<number, Product[]>();
+  const order: (Product | number)[] = [];
+  for (const p of list) {
+    const key = p.bsale_product_id ? Number(p.bsale_product_id) : 0;
+    if (!key) {
+      order.push(p);
+      continue;
+    }
+    if (!groups.has(key)) {
+      groups.set(key, []);
+      order.push(key);
+    }
+    groups.get(key)!.push(p);
+  }
+
+  return order.map((x) => {
+    if (typeof x !== "number") return x;
+    const vs = fillVariantNames(groups.get(x)!.sort(byVariantOrder));
+    if (vs.length === 1) return vs[0];
+    const main = [...vs].sort(
+      (a, b) =>
+        Number(b.stock > 0) - Number(a.stock > 0) || effectivePrice(a) - effectivePrice(b)
+    )[0];
+    return {
+      ...main,
+      name: main.base_name || main.name,
+      image_url: main.image_url ?? vs.find((v) => v.image_url)?.image_url ?? null,
+      leyenda: main.leyenda ?? vs.find((v) => v.leyenda)?.leyenda ?? null,
+      stock: vs.reduce((s, v) => s + Math.max(0, v.stock), 0),
+      featured: vs.some((v) => v.featured),
+      variants: vs.map(toVariant),
+    };
+  });
+}
+
+// Todas las variantes visibles del mismo producto de Bsale (incluida la actual).
+export async function getProductVariants(product: Product): Promise<Product[]> {
+  if (!isSupabaseConfigured() || !product.bsale_product_id) return [product];
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("bsale_product_id", product.bsale_product_id)
+      .eq("active", true);
+    if (error || !data) return [product];
+    const list = (data as unknown as Product[]).filter((p) => !p.hidden);
+    if (!list.some((p) => p.id === product.id)) list.push(product);
+    const priced = await applyEmpresaPrices(list);
+    return fillVariantNames(
+      priced.map((p) => (p.id === product.id ? product : p)).sort(byVariantOrder)
+    );
+  } catch {
+    return [product];
   }
 }
 

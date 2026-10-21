@@ -14,7 +14,14 @@ import PublicShell from "@/components/PublicShell";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductCard from "@/components/ProductCard";
-import { getProductBySlug, getProducts, getProductImages } from "@/lib/data/catalog";
+import VariantSelector from "@/components/VariantSelector";
+import {
+  getProductBySlug,
+  getProducts,
+  getProductImages,
+  getProductVariants,
+  variantLabel,
+} from "@/lib/data/catalog";
 import { hasOffer, effectivePrice } from "@/lib/price";
 import { formatCurrency } from "@/lib/format";
 
@@ -40,15 +47,43 @@ export default async function ProductoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
-  if (!product) notFound();
+  const variant = await getProductBySlug(slug);
+  if (!variant) notFound();
 
-  const images = await getProductImages(product.id);
+  // Variantes del mismo producto de Bsale. Si la elegida no tiene foto o
+  // textos propios, se usan los de otra variante.
+  const siblings = await getProductVariants(variant);
+  const hasVariants = siblings.length > 1;
+  const self = siblings.find((s) => s.id === variant.id) ?? variant;
+  const pick = <K extends keyof typeof variant>(k: K) =>
+    variant[k] || siblings.find((s) => s[k])?.[k] || variant[k];
+  const product = {
+    ...variant,
+    image_url: pick("image_url"),
+    description: pick("description"),
+    leyenda: pick("leyenda"),
+    datasheet_url: pick("datasheet_url"),
+    dimensions: pick("dimensions"),
+  };
+  const title = hasVariants ? self.base_name || variant.name : variant.name;
+
+  let images = await getProductImages(variant.id);
+  if (images.length === 0 && !variant.image_url && hasVariants) {
+    for (const s of siblings) {
+      if (s.id === variant.id) continue;
+      images = await getProductImages(s.id);
+      if (images.length > 0 || s.image_url) break;
+    }
+  }
 
   const related = (
     await getProducts({ categorySlug: product.category?.slug })
   )
-    .filter((p) => p.id !== product.id)
+    .filter(
+      (p) =>
+        p.id !== product.id &&
+        !(product.bsale_product_id && p.bsale_product_id === product.bsale_product_id)
+    )
     .slice(0, 3);
 
   const inStock = product.stock > 0;
@@ -65,7 +100,7 @@ export default async function ProductoPage({
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
           {/* Imagen / galería */}
-          <ProductGallery product={product} images={images} />
+          <ProductGallery key={product.id} product={product} images={images} />
 
           {/* Info */}
           <div className="flex flex-col">
@@ -77,7 +112,7 @@ export default async function ProductoPage({
                 {product.category.name}
               </Link>
             )}
-            <h1 className="mt-3 text-3xl font-bold text-ink">{product.name}</h1>
+            <h1 className="mt-3 text-3xl font-bold text-ink">{title}</h1>
             {product.leyenda && (
               <p className="mt-2 text-base text-ink-soft">{product.leyenda}</p>
             )}
@@ -99,6 +134,21 @@ export default async function ProductoPage({
               {inStock && <Check size={15} />}
               {inStock ? "Disponible" : "Temporalmente agotado"}
             </p>
+
+            {hasVariants && (
+              <VariantSelector
+                currentId={product.id}
+                variants={siblings.map((s) => ({
+                  id: s.id,
+                  slug: s.slug,
+                  label: variantLabel(s),
+                  sku: s.sku,
+                  price: s.price,
+                  offer_price: s.offer_price ?? null,
+                  stock: s.stock,
+                }))}
+              />
+            )}
 
             {product.description && (
               <p className="mt-6 whitespace-pre-line leading-relaxed text-ink-soft">
