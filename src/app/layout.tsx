@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/react";
+import CookieConsent from "@/components/CookieConsent";
 import { CartProvider } from "@/lib/cart/CartContext";
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ export default function RootLayout({
       </head>
       <body>
         <CartProvider>{children}</CartProvider>
-        <Analytics />
+        <CookieConsent />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import Logo from "./Logo";
+import CookieSettingsButton from "./CookieSettingsButton";
 import { SITE } from "@/lib/config";
 
 export default function Footer() {
@@ -58,7 +59,10 @@ export default function Footer() {
       <div className="border-t border-brand-100">
         <div className="container-page flex flex-col items-center justify-between gap-2 py-5 text-xs text-ink-muted sm:flex-row">
           <p>© {new Date().getFullYear()} {SITE.name}. Todos los derechos reservados.</p>
-          <p>Envolventes térmicos · EIFS · Acabados</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <Link href="/cookies" className="hover:text-brand-700">Política de cookies</Link>
+            <CookieSettingsButton className="hover:text-brand-700" />
+          </div>
         </div>
       </div>
     </footer>
