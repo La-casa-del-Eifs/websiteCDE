@@ -1,18 +1,36 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   ShieldCheck,
   Thermometer,
   Sparkles,
   Truck,
-  Layers,
+  ChevronDown,
+  ChevronRight,
+  HeartHandshake,
+  Award,
+  Lightbulb,
+  ThumbsUp,
+  Handshake,
+  Mail,
+  Phone,
+  MessageCircle,
 } from "lucide-react";
 import PublicShell from "@/components/PublicShell";
 import EifsCalculator from "@/components/EifsCalculator";
 import ProductCard from "@/components/ProductCard";
-import { getHomeCategories, getFeaturedProducts } from "@/lib/data/catalog";
+import ContactForm from "@/components/ContactForm";
+import Reveal from "@/components/Reveal";
+import DiamondPattern, { DiamondMark } from "@/components/DiamondPattern";
+import {
+  getHomeCategories,
+  getFeaturedProducts,
+  getCategoryCovers,
+} from "@/lib/data/catalog";
 import { getHeroImages } from "@/lib/hero";
 import HeroCarousel from "@/components/HeroCarousel";
+import { SITE } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -39,26 +57,79 @@ const benefits = [
   },
 ];
 
+const differentiators = [
+  {
+    icon: HeartHandshake,
+    title: "Tu obra primero",
+    text: "Que tu fachada quede bien es nuestro principal indicador.",
+  },
+  {
+    icon: Award,
+    title: "Calidad sin transar",
+    text: "Trabajamos solo con materiales y sistemas probados.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Asesoría técnica",
+    text: "Te ayudamos a especificar el sistema correcto para tu proyecto.",
+  },
+  {
+    icon: ThumbsUp,
+    title: "Recomendaciones honestas",
+    text: "Te ofrecemos lo que tu proyecto necesita, ni más ni menos.",
+  },
+  {
+    icon: Handshake,
+    title: "Relaciones de largo plazo",
+    text: "Del maestro a la constructora, te acompañamos obra tras obra.",
+  },
+];
+
+function SectionTitle({
+  title,
+  subtitle,
+  light = false,
+}: {
+  title: string;
+  subtitle?: string;
+  light?: boolean;
+}) {
+  return (
+    <div className="flex flex-col items-center text-center">
+      <DiamondMark light={light} />
+      <h2 className={`mt-3 text-3xl font-bold ${light ? "text-white" : "text-ink"}`}>
+        {title}
+      </h2>
+      {subtitle && (
+        <p className={`mt-2 max-w-xl text-sm ${light ? "text-brand-100" : "text-ink-soft"}`}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default async function HomePage() {
-  const [featured, categories] = await Promise.all([
+  const [featured, categories, heroImages] = await Promise.all([
     getFeaturedProducts(6),
     getHomeCategories(),
+    getHeroImages(),
   ]);
-  const heroImages = await getHeroImages();
+  const covers = await getCategoryCovers(categories.map((c) => c.id));
 
   return (
     <PublicShell>
       {/* Hero */}
-      <section className="container-page py-8 md:py-10">
-        <div className="relative rounded-2xl bg-brand-900 shadow-soft">
+      <section className="relative overflow-hidden bg-brand-900">
+        <div className="relative">
           {/* Fondo: carrusel (o navy si no hay imágenes) */}
           <div className="absolute inset-0">
             <HeroCarousel images={heroImages} variant="background" />
           </div>
           {/* Degradado para que el texto se lea sobre la foto */}
-          <div className="pointer-events-none absolute inset-0 z-[15] rounded-2xl bg-gradient-to-r from-brand-950/90 via-brand-950/55 to-brand-950/10" />
-          {/* Contenido encima */}
-          <div className="relative z-20 flex min-h-[380px] items-center p-8 sm:p-10 md:min-h-[460px] md:p-14">
+          <div className="pointer-events-none absolute inset-0 z-[15] bg-gradient-to-r from-brand-950/90 via-brand-950/55 to-brand-950/10" />
+          {/* Contenido encima: ocupa toda la pantalla bajo el menú */}
+          <div className="container-page relative z-20 flex min-h-[calc(100svh-4rem)] items-center py-16">
             <div className="max-w-xl">
               <span className="badge">Envolventes térmicos para tu proyecto</span>
               <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-white drop-shadow sm:text-5xl">
@@ -75,7 +146,7 @@ export default async function HomePage() {
                   Ver catálogo <ArrowRight size={17} />
                 </Link>
                 <Link
-                  href="/contacto"
+                  href="#contacto"
                   className="btn border border-white/40 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 focus:ring-white/50"
                 >
                   Solicitar cotización
@@ -86,60 +157,96 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Beneficios */}
-      <section className="container-page py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {benefits.map((b) => (
-            <div key={b.title} className="card p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gold-100 text-brand-900">
-                <b.icon size={22} />
+      {/* Franja con eslogan + botón para bajar */}
+      <section className="relative bg-gold-400">
+        <DiamondPattern id="slogan-diamonds" className="absolute inset-0 h-full w-full text-brand-900/10" />
+        <div className="container-page relative py-7 text-center">
+          <p className="text-lg text-brand-900 sm:text-2xl">
+            No solo vendemos materiales,{" "}
+            <span className="font-bold">te ayudamos a construir mejor.</span>
+          </p>
+        </div>
+        <a
+          href="#beneficios"
+          aria-label="Bajar a la siguiente sección"
+          className="absolute left-1/2 top-full flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-900 text-gold-400 shadow-soft ring-4 ring-sand transition hover:bg-brand-800"
+        >
+          <ChevronDown size={24} className="animate-bounce motion-reduce:animate-none" />
+        </a>
+      </section>
+
+      {/* Beneficios: íconos circulares */}
+      <section id="beneficios" className="container-page scroll-mt-20 py-20">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {benefits.map((b, i) => (
+            <Reveal key={b.title} delay={i * 100} className="flex flex-col items-center text-center">
+              <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-900 text-gold-400 ring-8 ring-gold-100">
+                <b.icon size={32} strokeWidth={1.6} />
               </span>
-              <h3 className="mt-4 font-semibold text-ink">{b.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+              <h3 className="mt-6 font-semibold text-ink">{b.title}</h3>
+              <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-ink-soft">
                 {b.text}
               </p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* Categorías */}
+      {/* Categorías: tarjetas con foto y "Ver más" */}
       <section className="container-page py-8">
-        <div className="flex items-end justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-ink">Categorías</h2>
-            <p className="mt-1 text-sm text-ink-soft">
-              Explora nuestras líneas de productos EIFS.
-            </p>
-          </div>
-          <Link
-            href="/catalogo"
-            className="hidden text-sm font-medium text-brand-600 hover:text-brand-700 sm:block"
-          >
-            Ver todo →
-          </Link>
+        <SectionTitle
+          title="Nuestros productos"
+          subtitle="Explora nuestras líneas de productos EIFS."
+        />
+
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((c, i) => {
+            const cover = covers[c.id];
+            return (
+              <Reveal key={c.id} delay={(i % 3) * 100}>
+                <Link
+                  href={`/catalogo?categoria=${c.slug}`}
+                  className="group relative flex aspect-[4/3] flex-col items-center justify-center overflow-hidden rounded-2xl bg-brand-900 p-6 text-center shadow-soft"
+                >
+                  {cover ? (
+                    <Image
+                      src={cover}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <DiamondPattern
+                      id={`cat-diamonds-${c.id}`}
+                      size={36}
+                      className="absolute inset-0 h-full w-full text-white/10 transition duration-500 group-hover:scale-105"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-950/90 via-brand-950/60 to-brand-950/35 transition group-hover:via-brand-950/70" />
+                  <div className="relative">
+                    <h3 className="text-xl font-bold leading-snug text-white drop-shadow">
+                      {c.name}
+                    </h3>
+                    {c.description && (
+                      <p className="mx-auto mt-2 line-clamp-2 max-w-xs text-sm text-brand-100">
+                        {c.description}
+                      </p>
+                    )}
+                  </div>
+                  <span className="absolute bottom-5 inline-flex items-center gap-1 text-sm font-semibold text-gold-400 transition group-hover:gap-2">
+                    Ver más <ChevronRight size={16} />
+                  </span>
+                </Link>
+              </Reveal>
+            );
+          })}
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/catalogo?categoria=${c.slug}`}
-              className="card group flex items-center gap-4 p-5 transition hover:border-brand-300"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand-600/10 text-brand-600">
-                <Layers size={22} />
-              </span>
-              <div>
-                <h3 className="font-semibold text-ink group-hover:text-brand-700">
-                  {c.name}
-                </h3>
-                <p className="mt-0.5 line-clamp-2 text-xs text-ink-soft">
-                  {c.description}
-                </p>
-              </div>
-            </Link>
-          ))}
+        <div className="mt-8 text-center">
+          <Link href="/catalogo" className="btn-outline">
+            Ver todo el catálogo <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
 
@@ -167,39 +274,77 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ¿Qué nos diferencia? */}
+      <section className="relative overflow-hidden bg-brand-950 py-20">
+        <DiamondPattern id="diff-diamonds" size={40} className="absolute inset-0 h-full w-full text-white/[0.04]" />
+        <div className="container-page relative">
+          <SectionTitle
+            light
+            title="¿Qué nos diferencia?"
+            subtitle="La experiencia de quienes usan nuestros productos es lo que más nos importa."
+          />
+          <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+            {differentiators.map((d, i) => (
+              <Reveal key={d.title} delay={i * 100} className="flex flex-col items-center text-center">
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-gold-400 ring-1 ring-white/15">
+                  <d.icon size={28} strokeWidth={1.6} />
+                </span>
+                <h3 className="mt-5 font-semibold text-white">{d.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-brand-200">{d.text}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Calculadora de rendimiento EIFS */}
       <EifsCalculator />
 
-      {/* CTA */}
-      <section className="container-page pb-4">
-        <div className="relative overflow-hidden rounded-3xl bg-brand-800 px-8 py-14 text-center text-white">
-          <div
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(135deg, #fff 0, #fff 1px, transparent 1px, transparent 24px)",
-            }}
-          />
-          <div className="relative mx-auto max-w-2xl">
-            <h2 className="text-3xl font-bold">¿Tienes un proyecto en mente?</h2>
-            <p className="mt-3 text-brand-100">
-              Cuéntanos qué necesitas y te ayudamos a especificar el sistema EIFS
-              ideal, con presupuesto a tu medida.
-            </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <Link
-                href="/contacto"
-                className="btn bg-white text-brand-800 hover:bg-brand-50"
-              >
-                Contáctanos <ArrowRight size={17} />
-              </Link>
-              <Link
-                href="/catalogo"
-                className="btn border border-white/40 text-white hover:bg-white/10"
-              >
-                Explorar catálogo
-              </Link>
+      {/* Contacto */}
+      <section id="contacto" className="container-page scroll-mt-20 pb-4">
+        <div className="relative overflow-hidden rounded-3xl bg-brand-800 px-6 py-12 sm:px-10 md:py-14">
+          <DiamondPattern id="contact-diamonds" size={32} className="absolute inset-0 h-full w-full text-white/[0.07]" />
+          <div className="relative grid items-center gap-10 lg:grid-cols-[1fr_1.15fr]">
+            <div className="text-white">
+              <DiamondMark light />
+              <h2 className="mt-3 text-3xl font-bold">¿Tienes un proyecto en mente?</h2>
+              <p className="mt-3 max-w-md text-brand-100">
+                Cuéntanos qué necesitas y te ayudamos a especificar el sistema EIFS
+                ideal, con presupuesto a tu medida.
+              </p>
+              <ul className="mt-7 space-y-3 text-sm">
+                <li>
+                  <a href={`mailto:${SITE.emails[0]}`} className="inline-flex items-center gap-3 hover:text-gold-300">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-gold-400">
+                      <Mail size={16} />
+                    </span>
+                    {SITE.emails[0]}
+                  </a>
+                </li>
+                <li>
+                  <a href={`tel:${SITE.phones[0].replace(/\s/g, "")}`} className="inline-flex items-center gap-3 hover:text-gold-300">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-gold-400">
+                      <Phone size={16} />
+                    </span>
+                    {SITE.phones[0]}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(SITE.whatsappMessage)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 hover:text-gold-300"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-gold-400">
+                      <MessageCircle size={16} />
+                    </span>
+                    Escríbenos por WhatsApp
+                  </a>
+                </li>
+              </ul>
             </div>
+            <ContactForm />
           </div>
         </div>
       </section>

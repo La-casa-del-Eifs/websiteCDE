@@ -98,6 +98,34 @@ export async function getHomeCategories(): Promise<Category[]> {
   }
 }
 
+// Portada de cada categoría: la imagen de un producto de esa categoría
+// (prioriza destacados). Devuelve { category_id: image_url }.
+export async function getCategoryCovers(
+  categoryIds: string[]
+): Promise<Record<string, string>> {
+  if (!isSupabaseConfigured() || categoryIds.length === 0) return {};
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("category_id, image_url, hidden")
+      .eq("active", true)
+      .not("image_url", "is", null)
+      .in("category_id", categoryIds)
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false });
+    if (error || !data) return {};
+    const covers: Record<string, string> = {};
+    for (const p of data as any[]) {
+      if (p.hidden || !p.category_id || covers[p.category_id]) continue;
+      covers[p.category_id] = p.image_url;
+    }
+    return covers;
+  } catch {
+    return {};
+  }
+}
+
 export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
   const list = await getProducts({ featuredOnly: true });
   if (list.length > 0) return list.slice(0, limit);

@@ -32,7 +32,7 @@ export default function Footer() {
             {SITE.emails.map((e) => (
               <li key={e} className="flex items-center gap-2">
                 <Mail size={16} className="shrink-0 text-brand-500" />
-                <a href={`mailto:${e}`} className="hover:text-brand-700">
+                <a href={`mailto:${e}`} className="min-w-0 break-all hover:text-brand-700">
                   {e}
                 </a>
               </li>

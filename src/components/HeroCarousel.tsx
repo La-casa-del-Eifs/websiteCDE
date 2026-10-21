@@ -25,8 +25,8 @@ export default function HeroCarousel({
     if (images.length === 0) return null;
     return (
       <>
-        {/* Fondo del banner (recortado a esquinas redondeadas; el producto sobresale fuera) */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl">
+        {/* Fondo del banner (ancho completo) */}
+        <div className="absolute inset-0 overflow-hidden">
           {images.map((slide, idx) => (
             <div
               key={slide.url}
@@ -49,12 +49,12 @@ export default function HeroCarousel({
           ))}
         </div>
 
-        {/* Producto (PNG) + texto de promo, abajo a la derecha, sobresaliendo */}
+        {/* Producto (PNG) + texto de promo, abajo a la derecha */}
         {images.map((slide, idx) =>
           slide.overlayUrl || slide.overlayText ? (
             <div
               key={`ov-${slide.url}`}
-              className={`pointer-events-none absolute bottom-0 right-0 z-[18] hidden translate-x-2 translate-y-8 items-end gap-2 transition-opacity duration-700 sm:flex md:translate-x-5 md:translate-y-10 md:gap-4 ${
+              className={`pointer-events-none absolute bottom-12 right-4 z-[18] hidden items-end gap-2 transition-opacity duration-700 sm:flex md:right-10 md:gap-4 lg:right-16 ${
                 idx === i ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -63,7 +63,7 @@ export default function HeroCarousel({
                 <img
                   src={slide.overlayUrl}
                   alt=""
-                  className="h-[200px] w-auto max-w-[42%] translate-x-1 translate-y-6 object-contain drop-shadow-2xl sm:h-[260px] md:h-[320px] md:translate-x-3 md:translate-y-10"
+                  className="h-[200px] w-auto max-w-[42%] object-contain drop-shadow-2xl sm:h-[260px] md:h-[320px]"
                 />
               )}
               {slide.overlayText && (
